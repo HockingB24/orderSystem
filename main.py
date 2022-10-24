@@ -1,6 +1,5 @@
 # Get input from CLI arguments using 'sys'
 import sys
-# Import OrderSystem class 
 from src.orderSystem import OrderSystem
 
 # Main function takes in input arguments and prints order 
@@ -32,7 +31,6 @@ def main(args):
     order = order.split(',')
     order.sort()
 
-    # Make our OrderSystem object
     orderSystem = OrderSystem()
     # Give the orderSystem our order 
     myOrder = orderSystem.orderMeal(meal, order)
