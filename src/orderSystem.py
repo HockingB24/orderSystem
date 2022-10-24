@@ -16,6 +16,55 @@ class OrderSystem:
     def __init__(self):
         pass
     
+    # Checks if order is valid. If not, prints error and returns "None". If it is, it returns the valid order.
+    # Note: Since water is always provided at dinner, this function adds water to dinner orders.
+    def __checkOrder(self, meal, ordersWithTypes):
+        errString = ""
+        typesOfOrders = ordersWithTypes["Types"]
+        itemsOrdered = ordersWithTypes["Orders"]
+
+        # Accumulate the number of each meal
+        numOfType = {"Main": 0, "Side": 0, "Drink": 0, "Dessert": 0}
+        for type in typesOfOrders:
+            if type in numOfType:
+                numOfType[type] += 1
+        # Check for errors related to the number of each meal 
+        if numOfType["Main"] == 0:
+            errString += "Main is missing. "
+        if numOfType["Side"] == 0:
+            errString += "Side is missing. "
+        if meal == "Dinner" and numOfType["Dessert"] == 0:
+            errString += "Dessert is missing. "
+
+        # Make booleans for other, general error conditions - order is invalid if any are met. 
+        multipleSidesNotLunch = (numOfType["Side"] > 1 and meal != "Lunch")
+        tooManyMainCourses = numOfType["Main"] > 1 
+        multipleDrinksNotBreakfast = (numOfType["Drink"] > 1 and meal != "Breakfast")
+
+        # Handle the general errors (Sequentially so all errors can be caught)
+        if multipleSidesNotLunch :
+            numIndex = typesOfOrders.index("Side")
+            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
+        if tooManyMainCourses:
+            numIndex = typesOfOrders.index("Main")
+            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
+        if multipleDrinksNotBreakfast:
+            numIndex = typesOfOrders.index("Drink")
+            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
+
+        # Add water if meal is dinner OR meal doesn't include a drink
+        if meal == "Dinner":
+            itemsOrdered.insert(-1, "Water")
+        elif numOfType["Drink"] == 0:
+            itemsOrdered.append("Water")
+        # Print out the errorstring if one exists and return None
+        if errString != "":
+            print(self.err(errString))
+            return None
+            
+        else:
+            return itemsOrdered
+
     # Truncates the order into the proper format by removing repeated entries
     # and putting the number of repeats next to the item
     # Input param: list orderNames: Array containing the name of every order (unformatted)
@@ -88,52 +137,6 @@ class OrderSystem:
         output = self.__formatOrder(validOrder)
         # Finally, we return the order in the form of a string for the main method to print
         return ', '.join(output)
-
-    # Checks if order is valid. If not, returns error. If it is, it returns the valid order.
-    # Note: Since water is always provided at dinner, this function adds water to dinner orders.
-    def __checkOrder(self, meal, ordersWithTypes):
-        errString = ""
-        typesOfOrders = ordersWithTypes["Types"]
-        itemsOrdered = ordersWithTypes["Orders"]
-
-        numOfType = {"Main": 0, "Side": 0, "Drink": 0, "Dessert": 0}
-        for type in typesOfOrders:
-            if type in numOfType:
-                numOfType[type] += 1
-        
-        if numOfType["Main"] == 0:
-            errString += "Main is missing. "
-        if numOfType["Side"] == 0:
-            errString += "Side is missing. "
-        if meal == "Dinner" and numOfType["Dessert"] == 0:
-            errString += "Dessert is missing. "
-
-        # Make booleans for error conditions - invalid if any are met. 
-        multipleSidesNotLunch = (numOfType["Side"] > 1 and meal != "Lunch")
-        tooManyMainCourses = numOfType["Main"] > 1 
-        multipleDrinksNotBreakfast = (numOfType["Drink"] > 1 and meal != "Breakfast")
-
-        # Handle the errors (Sequentially so all errors can be caught)
-        if multipleSidesNotLunch :
-            numIndex = typesOfOrders.index("Side")
-            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
-        if tooManyMainCourses:
-            numIndex = typesOfOrders.index("Main")
-            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
-        if multipleDrinksNotBreakfast:
-            numIndex = typesOfOrders.index("Drink")
-            errString += itemsOrdered[numIndex] + " can not be ordered more than once. "
-
-        if meal == "Dinner":
-            itemsOrdered.insert(-1, "Water")
-        elif numOfType["Drink"] == 0:
-            itemsOrdered.append("Water")
-
-        if errString != "":
-            print(self.err(errString))
-            
-        else:
-            return itemsOrdered
 
     # Returns an error message for printing based on incorrect inputs 
     def err(self, error, item=None):

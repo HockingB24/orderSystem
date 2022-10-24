@@ -1,10 +1,9 @@
-# Get input from input arguments using 'sys'
+# Get input from CLI arguments using 'sys'
 import sys
 # Import OrderSystem class 
-from orderSystem import OrderSystem
+from src.orderSystem import OrderSystem
 
-# Main function takes in input arguments and returns+prints order 
-# Returns order in the form of a string formatted to match the output tests
+# Main function takes in input arguments and prints order 
 def main(args):
     # Make sure there are enough arguments -- if not, throw errors immediately based on what is missing
     numArgs = len(args)
@@ -38,7 +37,7 @@ def main(args):
     # Give the orderSystem our order 
     myOrder = orderSystem.orderMeal(meal, order)
     
-    # orderMeal() will return None if the order is invalid. If it doesn't, print and return order 
+    # orderMeal() will return None if the order is invalid. If it doesn't, print order 
     if myOrder != None:
         print(myOrder)
     
